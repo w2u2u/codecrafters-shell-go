@@ -32,6 +32,8 @@ func main() {
 		case "type":
 			if slices.Contains([]string{"echo", "exit", "type"}, commands[1]) {
 				fmt.Fprintf(os.Stdout, "%s is a shell builtin\n", commands[1])
+			} else if pathCommand, err := tryGetPathCommand(commands[1]); err == nil {
+				fmt.Fprintf(os.Stdout, "%s is %s\n", commands[1], pathCommand)
 			} else {
 				fmt.Fprintf(os.Stdout, "%s not found\n", commands[1])
 			}
@@ -39,4 +41,17 @@ func main() {
 			fmt.Fprintf(os.Stdout, "%s: command not found\n", message)
 		}
 	}
+}
+
+func tryGetPathCommand(command string) (string, error) {
+	paths := os.Getenv("PATH")
+
+	for _, path := range strings.Split(paths, ":") {
+		pathCommand := path + "/" + command
+		if _, err := os.Stat(pathCommand); err == nil {
+			return pathCommand, nil
+		}
+	}
+
+	return "", fmt.Errorf("command not found")
 }
