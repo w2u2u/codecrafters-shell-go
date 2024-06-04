@@ -23,17 +23,11 @@ func main() {
 		commands := strings.Split(message, " ")
 		switch commands[0] {
 		case "exit":
-			exit(commands[1])
+			execExitCommand(commands[1])
 		case "echo":
-			echo(commands[1:])
+			execEchoCommand(commands[1:])
 		case "type":
-			if slices.Contains([]string{"echo", "exit", "type"}, commands[1]) {
-				fmt.Fprintf(os.Stdout, "%s is a shell builtin\n", commands[1])
-			} else if pathCommand, err := tryGetPathCommand(commands[1]); err == nil {
-				fmt.Fprintf(os.Stdout, "%s is %s\n", commands[1], pathCommand)
-			} else {
-				fmt.Fprintf(os.Stdout, "%s not found\n", commands[1])
-			}
+			execTypeCommand(commands[1])
 		case "cd":
 			if err := os.Chdir(commands[1]); err != nil {
 				fmt.Fprintf(os.Stdout, "%s: No such file or directory\n", commands[1])
@@ -48,7 +42,7 @@ func main() {
 	}
 }
 
-func exit(arg string) {
+func execExitCommand(arg string) {
 	code, err := strconv.Atoi(arg)
 	if err != nil {
 		os.Exit(1)
@@ -56,8 +50,18 @@ func exit(arg string) {
 	os.Exit(code)
 }
 
-func echo(args []string) {
+func execEchoCommand(args []string) {
 	fmt.Fprintf(os.Stdout, "%s\n", strings.Join(args, " "))
+}
+
+func execTypeCommand(command string) {
+	if slices.Contains([]string{"echo", "exit", "type"}, command) {
+		fmt.Fprintf(os.Stdout, "%s is a shell builtin\n", command)
+	} else if pathCommand, err := tryGetPathCommand(command); err == nil {
+		fmt.Fprintf(os.Stdout, "%s is %s\n", command, pathCommand)
+	} else {
+		fmt.Fprintf(os.Stdout, "%s not found\n", command)
+	}
 }
 
 func tryGetPathCommand(command string) (string, error) {
