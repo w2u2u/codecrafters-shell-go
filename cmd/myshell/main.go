@@ -25,7 +25,7 @@ func main() {
 		case "exit":
 			exit(commands[1])
 		case "echo":
-			fmt.Fprintf(os.Stdout, "%s\n", strings.Join(commands[1:], " "))
+			echo(commands[1:])
 		case "type":
 			if slices.Contains([]string{"echo", "exit", "type"}, commands[1]) {
 				fmt.Fprintf(os.Stdout, "%s is a shell builtin\n", commands[1])
@@ -54,6 +54,10 @@ func exit(arg string) {
 		os.Exit(1)
 	}
 	os.Exit(code)
+}
+
+func echo(args []string) {
+	fmt.Fprintf(os.Stdout, "%s\n", strings.Join(args, " "))
 }
 
 func tryGetPathCommand(command string) (string, error) {
