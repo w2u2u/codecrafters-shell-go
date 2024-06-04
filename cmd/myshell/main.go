@@ -29,9 +29,7 @@ func main() {
 		case "type":
 			execTypeCommand(commands[1])
 		case "cd":
-			if err := os.Chdir(commands[1]); err != nil {
-				fmt.Fprintf(os.Stdout, "%s: No such file or directory\n", commands[1])
-			}
+			execCdCommand(commands[1])
 		default:
 			if output, err := tryExecuteCommand(commands[0], commands[1:]); err == nil {
 				fmt.Fprintf(os.Stdout, "%s\n", output)
@@ -61,6 +59,12 @@ func execTypeCommand(command string) {
 		fmt.Fprintf(os.Stdout, "%s is %s\n", command, pathCommand)
 	} else {
 		fmt.Fprintf(os.Stdout, "%s not found\n", command)
+	}
+}
+
+func execCdCommand(path string) {
+	if err := os.Chdir(path); err != nil {
+		fmt.Fprintf(os.Stdout, "%s: No such file or directory\n", path)
 	}
 }
 
