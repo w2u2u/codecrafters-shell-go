@@ -38,6 +38,10 @@ func main() {
 			} else {
 				fmt.Fprintf(os.Stdout, "%s not found\n", commands[1])
 			}
+		case "cd":
+			if err := os.Chdir(commands[1]); err != nil {
+				fmt.Fprintf(os.Stdout, "%s: No such file or directory\n", commands[1])
+			}
 		default:
 			if output, err := tryExecuteCommand(commands[0], commands[1:]); err == nil {
 				fmt.Fprintf(os.Stdout, "%s\n", output)
