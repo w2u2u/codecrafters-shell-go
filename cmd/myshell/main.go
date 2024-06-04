@@ -23,11 +23,7 @@ func main() {
 		commands := strings.Split(message, " ")
 		switch commands[0] {
 		case "exit":
-			code, err := strconv.Atoi(commands[1])
-			if err != nil {
-				os.Exit(1)
-			}
-			os.Exit(code)
+			exit(commands[1])
 		case "echo":
 			fmt.Fprintf(os.Stdout, "%s\n", strings.Join(commands[1:], " "))
 		case "type":
@@ -50,6 +46,14 @@ func main() {
 			}
 		}
 	}
+}
+
+func exit(arg string) {
+	code, err := strconv.Atoi(arg)
+	if err != nil {
+		os.Exit(1)
+	}
+	os.Exit(code)
 }
 
 func tryGetPathCommand(command string) (string, error) {
